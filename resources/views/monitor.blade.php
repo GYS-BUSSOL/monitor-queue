@@ -407,7 +407,7 @@
                                 <h5 class="card-title">
                                     {!! $cardTitle !!}
                                 </h5>
-                                {{ $reason }}
+                                {!! $reason !!}
                             </div>
                             <div class="card-footer -mt-5">
                                 <i class="{{ $iconClass }} status-icon"></i>
@@ -490,7 +490,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
-        let applications;
+        const applications = @json($data['applications']);
 
         function updateContent() {
             $.ajax({
@@ -502,31 +502,6 @@
                     $('#gangContainer').html(gangContainer);
                     let statusCardContainer = $(response).find('#statusCards').html();
                     $('#statusCards').html(statusCardContainer);
-                    applications = response.applications
-                    applications.forEach((app, index) => {
-                        // Hitung initialDuration berdasarkan durasi
-                        const initialDuration = app.durasi ?
-                            Math.floor((new Date(app.durasi).getTime() - new Date().setHours(0, 0, 0,
-                                0)) / 1000) :
-                            0;
-                        let timeInQueue = initialDuration;
-
-                        // Jalankan interval untuk setiap aplikasi
-                        setInterval(() => {
-                            timeInQueue++;
-                            const timeElement = document.getElementById(`timeInQueue${index}`);
-
-                            if (timeElement) {
-                                // Konversi waktu dalam detik menjadi format HH:MM:SS
-                                const hours = String(Math.floor(timeInQueue / 3600)).padStart(2,
-                                    '0');
-                                const minutes = String(Math.floor((timeInQueue % 3600) / 60))
-                                    .padStart(2, '0');
-                                const seconds = String(timeInQueue % 60).padStart(2, '0');
-                                timeElement.innerHTML = `${hours}:${minutes}:${seconds}`;
-                            }
-                        }, 1000);
-                    });
                 },
                 error: function(xhr, status, error) {
                     console.log('Error occurred: ' + status + ' - ' + error);
@@ -551,6 +526,38 @@
         }
         setInterval(updateDateTime, 1000);
         updateDateTime();
+
+        function timeInQueue() {
+            const initialDurations = {};
+            const timeInQueue = {};
+            applications.forEach((app, index) => {
+                if (app['durasi'] !== null) {
+                    const now = new Date();
+                    const [hours, minutes, seconds] = app['durasi'].split(':').map(Number);
+                    initialDurations[`initialDuration${index}`] = Math.floor((
+                            new Date(now.setHours(hours, minutes, seconds)) - new Date(now.setHours(0, 0, 0))) /
+                        1000);
+                    timeInQueue[`timeInQueue${index}`] = initialDurations[[`initialDuration${index}`]];
+
+                    // Jalankan interval untuk setiap 
+                    setInterval(() => {
+                        timeInQueue[[`timeInQueue${index}`]]++;
+
+                        const timeElement = document.getElementById(`timeInQueue${index}`);
+
+                        if (timeElement) {
+                            timeElement.innerHTML = new Date(timeInQueue[`timeInQueue${index}`] * 1000)
+                                .toISOString()
+                                .substr(11, 8);
+                        }
+
+                    }, 1000);
+                }
+            });
+        }
+
+        // Panggil fungsi timeInQueue
+        timeInQueue();
     </script>
 </body>
 

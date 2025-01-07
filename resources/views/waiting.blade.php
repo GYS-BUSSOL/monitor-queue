@@ -154,7 +154,7 @@
                                 <th>Truck Number</th>
                             </tr>
                             @php
-                                $list = DB::select('EXEC Wbms.dbo.usp_QMGetWaitingList ?', [$type->truck_no]);
+                                $list = app('App\Http\Controllers\MonitorController')->getWaitingList($type->truck_no);
                             @endphp
                             @foreach ($list as $list)
                                 <tr>
@@ -176,29 +176,34 @@
             @foreach ($data['type'] as $list2)
                 @php
                     $i = 0;
-                    $loc = DB::select('EXEC Wbms.dbo.usp_QMGetGangScrapType ?', [$list2->type]);
-                    $qry = DB::select('EXEC Wbms.dbo.usp_QMtoScrapYardList ?', [$list2->truck_no]);
+                    $loc = app('App\Http\Controllers\MonitorController')->getGangScrapType($list2->type);
+                    $qry = app('App\Http\Controllers\MonitorController')->toScrapYardList($list2->truck_no);
+
                 @endphp
-                <div class="card">
-                    <div class="card-header green">
-                        {{ strtoupper($list2->type) . '( ' . $loc[0]->location_name . ' )' }}
-                    </div>
-                    <div class="card-content">
-                        <table class="table">
-                            <tr>
-                                <th>Queue Number</th>
-                                <th>Truck Number</th>
-                            </tr>
-                            @foreach ($qry as $list)
+                @if ($loc[0]->location_name !== null)
+                    <div class="card">
+                        <div class="card-header green">
+                            {{ strtoupper($list2->type) }}
+                            <br>
+                            {{ '( ' . $loc[0]->location_name . ' )' }}
+                        </div>
+                        <div class="card-content">
+                            <table class="table">
                                 <tr>
-                                    <td class="item" data-id="{{ $list->QueNo }}">
-                                    <td>{{ $list->truck_type . sprintf('%03d', $list->QueNo) }}</td>
-                                    <td>{{ $list->VechileNo }}</td>
+                                    <th>Queue Number</th>
+                                    <th>Truck Number</th>
                                 </tr>
-                            @endforeach
-                        </table>
+                                @foreach ($qry as $list)
+                                    <tr>
+                                        <td class="item" data-id="{{ $list->QueNo }}">
+                                            {{ $list->truck_type . sprintf('%03d', $list->QueNo) }}</>
+                                        <td>{{ $list->VechileNo }}</td>
+                                    </tr>
+                                @endforeach
+                            </table>
+                        </div>
                     </div>
-                </div>
+                @endif
                 @php
                     $i++;
                 @endphp

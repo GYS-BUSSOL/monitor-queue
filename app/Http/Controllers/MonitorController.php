@@ -76,6 +76,22 @@ class MonitorController extends Controller
         return $data;
     }
 
+    public function getGangScrapType($type) {
+        $data= DB::select('EXEC Wbms.dbo.usp_QMGetGangScrapType ?', [$type]);
+        return $data;
+    }
+
+    public function toScrapYardList($truck_no) {
+        $data = DB::select('EXEC Wbms.dbo.usp_QMtoScrapYardList ?', [$truck_no]);
+        return $data;
+    }
+
+    public function getWaitingList($truck_no) {
+        $data = DB::select('EXEC Wbms.dbo.usp_QMGetWaitingList ?', [$truck_no]);
+        return $data;
+
+    }
+
     public function waiting() {
         $this->emptyCache();
         $data['type'] = DB::select('SELECT * FROM v_queuing_scrap_type_all');
