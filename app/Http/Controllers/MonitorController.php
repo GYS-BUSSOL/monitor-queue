@@ -31,7 +31,14 @@ class MonitorController extends Controller
     }
 
     public function showWaiting() {
-        return view('waiting');
+        $data['type'] = DB::select('SELECT * FROM v_queuing_scrap_type_all');
+        $data['type2'] = DB::select('SELECT * FROM v_queuing_scrap_type');
+        
+        foreach ($data['type2'] as $item) {
+            $item->loc = $this->getGangScrapType($item->type);
+        }
+        // dd($data);
+        return view('waiting', ['data' => $data]);
     }
 
     public function monitor() {
@@ -77,7 +84,8 @@ class MonitorController extends Controller
 
     public function getGangScrapType($type) {
         $data= DB::select('EXEC Wbms.dbo.usp_QMGetGangScrapType ?', [$type]);
-        return $data;
+        $loc = $data[0]->location_name;
+        return $loc;
     }
 
     public function toScrapYardList($truck_no) {
@@ -95,22 +103,24 @@ class MonitorController extends Controller
         $this->emptyCache();
         $type = DB::select('SELECT * FROM v_queuing_scrap_type_all');
         $type2 = DB::select('SELECT * FROM v_queuing_scrap_type');
+        $list = [];
+        $list2 = [];
 
-        foreach ($type as &$item) {
-            $item->list = $this->getWaitingList($item->truck_no);
+        foreach ($type2 as $item) {
+            $list2[] = $this->toScrapYardList($item->truck_no);
         }
 
-        foreach ($type2 as &$item) {
-            $item->loc = $this->getGangScrapType($item->type);
-            $item->qry = $this->toScrapYardList($item->truck_no);
+        foreach ($type as $item) {
+            $list[] = $this->getWaitingList($item->truck_no);
         }
+        // dd($list);
 
         return response()->json([
             'status' => 200,
             'message' => 'Successfully retrieved signature type data',
             'data' => [
-                'type' => $type,
-                'type2' => $type2,
+                'list' => $list,
+                'list2' => $list2,
             ],
         ], 200);
 

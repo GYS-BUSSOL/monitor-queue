@@ -143,12 +143,56 @@
     <div class="container">
         <div class="section-title">WAITING AREA</div>
         <div class="card-wrapper" id="waitingArea">
-            {{-- WAITING AREA CONTENT --}}
-
+            @php
+                $i = 0;
+            @endphp
+            @foreach ($data['type'] as $type)
+                <div class="card">
+                    <div class="card-header orange">
+                        {{ strtoupper($type->type) . ' (' . $type->total . ')' }}
+                    </div>
+                    <div class="card-content">
+                        <table class="table">
+                            <tr>
+                                <th>Queue Number</th>
+                                <th>Truck Number</th>
+                            </tr>
+                            <tbody id="waiting{{ $i }}"></tbody>
+                        </table>
+                    </div>
+                </div>
+                @php
+                    $i++;
+                @endphp
+            @endforeach
         </div>
         <div class="section-title">TO SCRAP YARD</div>
         <div class="card-wrapper" id="scrapYard">
-            {{-- SCRAP YARD CONTENT --}}
+            @php
+                $i = 0;
+            @endphp
+            @foreach ($data['type2'] as $group)
+                <div class="card">
+                    <div class="card-header green">
+                        {{ strtoupper($group->type) }}
+                        <br>
+                        {{ '( ' . $group->loc . ' )' }}
+                    </div>
+                    <div class="card-content">
+                        <table class="table">
+                            <tr>
+                                <th>Queue Number</th>
+                                <th>Truck Number</th>
+                            </tr>
+                            <tbody id="scrap{{ $i }}"></tbody>
+                        </table>
+                    </div>
+                </div>
+                @php
+                    $i++;
+                @endphp
+            @endforeach
+
         </div>
     </div>
 
@@ -157,6 +201,8 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
         let isSpeechSynthesisActivated = false;
+        let previousWaitingArea = '';
+        let previousScrapYard = '';
 
         function activateSpeechSynthesis() {
             if (!isSpeechSynthesisActivated) {
@@ -284,97 +330,73 @@
                         'content'),
                 },
                 success: function(response) {
-                    const type1 = response.data.type;
-                    const type2 = response.data.type2;
-
-                    // Konten di waiting area
-                    const waitingArea =
-                        type1.map((type) => {
-
-                            const tableRows = type.list.map(
-                                    (item) =>
-                                    `<tr>
-                                        <td>${item.truck_type}${String(item.QueNo).padStart(3, "0")}</td>
-                                        <td>${item.VechileNo}</td>
-                                    </tr>`
-                                )
-                                .join("");
-                            return `
-                            <div class="card">
-                                <div class="card-header orange">
-                                    <span style="text-transform:uppercase">${type.type} (${type.total})</span>
-                                </div>
-                                <div class="card-content">
-                                    <table class="table">
-                                        <tr>
-                                            <th>Queue Number</th>
-                                            <th>Truck Number</th>
-                                        </tr>
-                                        ${tableRows}
-                                    </table>
-                                </div>
-                            </div>`;
-                        })
-
-                    // Konten di scrap yard
-                    const scrapYard =
-                        type2.map((type) => {
-                            const loc = type.loc.map(
-                                    (item) =>
-                                    `<span>( ${item.location_name} )</span>`
-                                )
-                                .join("");
-                            const tableRows = type.qry.map(
-                                    (item) =>
-                                    `<tr>
-                                    <td class="item" data-id="${item.QueNo}">${item.truck_type}${String(item.QueNo).padStart(3, "0")}</td>
-                                    <td>${item.VechileNo}</td>
-                                </tr>`
-                                )
-                                .join("");
-                            return `
-                            <div class="card">
-                                <div class="card-header green">
-                                    <span style="text-transform:uppercase">${type.type}</span>
-                                            <br>
-                                    ${loc}
-                                </div>
-                                <div class="card-content">
-                                    <table class="table">
-                                        <tr>
-                                            <th>Queue Number</th>
-                                            <th>Truck Number</th>
-                                        </tr>
-                                        ${tableRows}
-                                    </table>
-                                </div>
-                            </div>`;
-                        })
-
                     const waitingAreaElement = document.getElementById("waitingArea");
                     const scrapYardElement = document.getElementById("scrapYard");
 
-                    // Simpan HTML saat ini sebelum diperbarui
-                    const previousWaitingArea = waitingAreaElement.innerHTML;
-                    const previousScrapYard = scrapYardElement.innerHTML;
+                    const list = response.data.list
+                    const list2 = response.data.list2
 
-                    // Perbarui HTML dengan konten baru
-                    waitingAreaElement.innerHTML = waitingArea.join("");
-                    scrapYardElement.innerHTML = scrapYard.join("");
+                    // WAITING AREA
+                    list.forEach((group, index) => {
+                        const waitingElementId = `waiting${index}`;
+                        const waitingElement = document.getElementById(waitingElementId);
 
-                    // Simpan HTML setelah pembaruan
-                    const waitingAreaContent = waitingAreaElement.innerHTML;
-                    const scrapYardContent = scrapYardElement.innerHTML;
+                        if (waitingElement) {
+                            if (group.length > 0) {
+                                // Add data to the element
+                                waitingElement.innerHTML = group
+                                    .map(
+                                        (item) => `
+                                        <tr>
+                                            <td>${item.truck_type}${String(item.QueNo).padStart(3, "0")}</td>
+                                            <td>${item.VechileNo}</td>
+                                        </tr>`
+                                    )
+                                    .join("");
+                            }
+                        }
+                    });
 
+                    // SCRAP YARD
+                    list2.forEach((group, index) => {
+                        const scrapElementId = `scrap${index}`;
+                        const scrapElement = document.getElementById(scrapElementId);
 
-                    // Memeriksa perubahan antara Waiting Area dan Scrap Yard
-                    compareAreasForMovement(previousWaitingArea, waitingAreaContent, 'Waiting Area',
-                        'Scrap Yard');
-                    compareAreasForMovement(previousScrapYard, scrapYardContent, 'Scrap Yard', 'Waiting Area');
+                        if (scrapElement) {
+                            if (group.length > 0) {
+                                // Add data to the element
+                                scrapElement.innerHTML = group
+                                    .map(
+                                        (item) => `
+                                        <tr>
+                                            <td class="item" data-id="${item.QueNo}">${item.truck_type}${String(item.QueNo).padStart(3, "0")}</td>
+                                            <td>${item.VechileNo}</td>
+                                        </tr>`
+                                    )
+                                    .join("");
+                            }
+                        }
+                    });
 
-                    // Memanggil announceNewData untuk mengumumkan data baru yang masuk
-                    announceNewData(waitingAreaContent, previousWaitingArea, 'Waiting Area');
-                    announceNewData(scrapYardContent, previousScrapYard, 'Scrap Yard');
+                    if (isSpeechSynthesisActivated) {
+                        // Simpan HTML setelah pembaruan
+                        const waitingAreaContent = waitingAreaElement.innerHTML;
+                        const scrapYardContent = scrapYardElement.innerHTML;
+
+                        // Memeriksa perubahan antara Waiting Area dan Scrap Yard
+                        compareAreasForMovement(previousWaitingArea, waitingAreaContent, 'Waiting Area',
+                            'Scrap Yard');
+                        compareAreasForMovement(previousScrapYard, scrapYardContent, 'Scrap Yard',
+                            'Waiting Area');
+
+                        // Memanggil announceNewData untuk mengumumkan data baru yang masuk
+                        announceNewData(waitingAreaContent, previousWaitingArea, 'Waiting Area');
+                        announceNewData(scrapYardContent, previousScrapYard, 'Scrap Yard');
+
+                        previousWaitingArea = waitingAreaContent;
+                        previousScrapYard = scrapYardContent;
+                    }
+
                 },
 
                 error: function(xhr, status, error) {
@@ -385,7 +407,6 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             activateSpeechSynthesis();
-            // updateContent(); // Memuat data saat halaman dimuat
             setInterval(updateContent, 5000); // Memperbarui data setiap 5 detik
         });
 
