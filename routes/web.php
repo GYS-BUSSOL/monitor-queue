@@ -8,3 +8,5 @@ Route::get('/waiting', [MonitorController::class, 'showWaiting']);
 
 Route::get('/get-monitor', [MonitorController::class, 'monitor']);
 Route::get('/get-waiting', [MonitorController::class, 'waiting']);
+
+Route::post('/get-waiting-list', [MonitorController::class, 'getWaitingList']);

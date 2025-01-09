@@ -31,8 +31,7 @@ class MonitorController extends Controller
     }
 
     public function showWaiting() {
-        $data = $this->waiting();
-        return view('waiting', ['data' => $data]);
+        return view('waiting');
     }
 
     public function monitor() {
@@ -94,11 +93,27 @@ class MonitorController extends Controller
 
     public function waiting() {
         $this->emptyCache();
-        $data['type'] = DB::select('SELECT * FROM v_queuing_scrap_type_all');
-        $data['type2'] = DB::select('SELECT * FROM v_queuing_scrap_type');
-        $data['applications'] = '';
+        $type = DB::select('SELECT * FROM v_queuing_scrap_type_all');
+        $type2 = DB::select('SELECT * FROM v_queuing_scrap_type');
 
-        return $data;
+        foreach ($type as &$item) {
+            $item->list = $this->getWaitingList($item->truck_no);
+        }
+
+        foreach ($type2 as &$item) {
+            $item->loc = $this->getGangScrapType($item->type);
+            $item->qry = $this->toScrapYardList($item->truck_no);
+        }
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Successfully retrieved signature type data',
+            'data' => [
+                'type' => $type,
+                'type2' => $type2,
+            ],
+        ], 200);
+
     }
-
 }
+

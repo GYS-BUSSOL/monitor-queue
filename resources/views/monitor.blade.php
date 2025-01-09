@@ -7,6 +7,7 @@
     <title>GYS - QMS</title>
     <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.css') }}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link rel="icon" href="{{ asset('assets/images/favicon_gys.ico') }}" type="image/x-icon">
     <style>
         @media screen and (min-width: 1220px) {
             .container {
