@@ -361,128 +361,136 @@
 </head>
 
 <body>
-    <div class="container">
-        <h1 class="title">Queue Management System</h1>
-        <div class="date-time" id="currentDateTime"></div>
-        <div class="main-content">
-            <div class="gang-container" id="gangContainer">
-                @php
-                    $i = 0;
-                    $namaGrader = session('nama');
-                @endphp
-                @foreach ($data['applications'] as $app)
+    <div
+        style="
+    background: url('{{ asset('assets/images/queue/background.png') }}') center center / contain no-repeat;
+    height: 100vh;
+    width: 100vw;">
+        <div class="container">
+            <h1 class="title">Queue Management System</h1>
+            <div class="date-time" id="currentDateTime"></div>
+            <div class="main-content">
+                <div class="gang-container" id="gangContainer">
                     @php
-                        $iconClass = $app['queue'] ? 'fas fa-check-circle icon-success text-success' : '';
-                        if ($app['active_gang'] == '1') {
-                            $headerClass = $app['queue'] ? 'header-green' : 'header-grey';
-                            $cardTitle = $app['queue']
-                                ? $app['type'] . sprintf('%03d', $app['queue'])
-                                : '<i class="fas fa-minus-circle text-muted"></i>';
-                            $reason = '';
-                        } else {
-                            $headerClass = 'header-red';
-                            $cardTitle = '<i class="fas fa-times-circle text-danger"></i>';
-                            $reason = $app['reason'] ? '<span class="title-reason">' . $app['reason'] . '</span>' : '';
-                        }
+                        $i = 0;
+                        $namaGrader = session('nama');
                     @endphp
+                    @foreach ($data['applications'] as $app)
+                        @php
+                            $iconClass = $app['queue'] ? 'fas fa-check-circle icon-success text-success' : '';
+                            if ($app['active_gang'] == '1') {
+                                $headerClass = $app['queue'] ? 'header-green' : 'header-grey';
+                                $cardTitle = $app['queue']
+                                    ? $app['type'] . sprintf('%03d', $app['queue'])
+                                    : '<i class="fas fa-minus-circle text-muted"></i>';
+                                $reason = '';
+                            } else {
+                                $headerClass = 'header-red';
+                                $cardTitle = '<i class="fas fa-times-circle text-danger"></i>';
+                                $reason = $app['reason']
+                                    ? '<span class="title-reason">' . $app['reason'] . '</span>'
+                                    : '';
+                            }
+                        @endphp
 
-                    <div class="gang-card">
-                        <div class="card app-card">
-                            <div class="card-header {{ $headerClass }}">
-                                {{ $app['name'] }}
-                            </div>
-                            <div class="card-body mb-3">
-                                @if ($app['queue'])
-                                    <div class="info-middle timer" id="timerInQueue{{ $i }}"
-                                        data-initial-duration="0">
-                                        <i class="fas fa-clock"></i>
-                                        <span id="timeInQueue{{ $i }}"></span>
-                                    </div>
-                                    @if (!empty($namaGrader) || $namaGrader !== null)
-                                        <div class="grader-name">
-                                            <i class="fas fa-user"></i>
-                                            <strong>{{ $app['grader'] }}</strong>
+                        <div class="gang-card">
+                            <div class="card app-card">
+                                <div class="card-header {{ $headerClass }}">
+                                    {{ $app['name'] }}
+                                </div>
+                                <div class="card-body mb-3">
+                                    @if ($app['queue'])
+                                        <div class="info-middle timer" id="timerInQueue{{ $i }}"
+                                            data-initial-duration="0">
+                                            <i class="fas fa-clock"></i>
+                                            <span id="timeInQueue{{ $i }}"></span>
                                         </div>
+                                        @if (!empty($namaGrader) || $namaGrader !== null)
+                                            <div class="grader-name">
+                                                <i class="fas fa-user"></i>
+                                                <strong>{{ $app['grader'] }}</strong>
+                                            </div>
+                                        @endif
                                     @endif
-                                @endif
-                                <h5 class="card-title">
-                                    {!! $cardTitle !!}
-                                </h5>
-                                {!! $reason !!}
-                            </div>
-                            <div class="card-footer -mt-5">
-                                <i class="{{ $iconClass }} status-icon"></i>
+                                    <h5 class="card-title">
+                                        {!! $cardTitle !!}
+                                    </h5>
+                                    {!! $reason !!}
+                                </div>
+                                <div class="card-footer -mt-5">
+                                    <i class="{{ $iconClass }} status-icon"></i>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    @php
-                        $i++;
-                    @endphp
-                @endforeach
-            </div>
-        </div>
-        <div class="status-cards-container card-responsive" id="statusCards">
-            <div class="col-md-2">
-                <div class="card app-card status-card">
-                    <div class="card-header header-green">
-                        <span>Total Registered Trucks</span>
-                    </div>
-                    <div class="card-body">
-                        {{ $data['is_registed'] }}
-                    </div>
+                        @php
+                            $i++;
+                        @endphp
+                    @endforeach
                 </div>
             </div>
-            <div class="col-md-2">
-                <div class="card app-card status-card">
-                    <div class="card-header header-yellow">
-                        <span>Total Trucks in Queue</span>
-                    </div>
-                    <div class="card-body">
-                        {{ $data['in_queue'] }}
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-2">
-                <div class="card app-card status-card">
-                    <div class="card-header header-orange">
-                        <span>Total Trucks in Progress</span>
-                    </div>
-                    <div class="card-body">
-                        {{ $data['in_progress'] }}
+            <div class="status-cards-container card-responsive" id="statusCards">
+                <div class="col-md-2">
+                    <div class="card app-card status-card">
+                        <div class="card-header header-green">
+                            <span>Total Registered Trucks</span>
+                        </div>
+                        <div class="card-body">
+                            {{ $data['is_registed'] }}
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-2">
-                <div class="card app-card status-card">
-                    <div class="card-header header-blue">
-                        <span>Total Completed Trucks</span>
-                    </div>
-                    <div class="card-body">
-                        {{ $data['complited'] }}
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-2">
-                <div class="card app-card status-card">
-                    <div class="card-header header-red">
-                        <span>Total Outstanding Trucks</span>
-                    </div>
-                    <div class="card-body">
-                        {{ $data['outstanding_trucks'] }}
+                <div class="col-md-2">
+                    <div class="card app-card status-card">
+                        <div class="card-header header-yellow">
+                            <span>Total Trucks in Queue</span>
+                        </div>
+                        <div class="card-body">
+                            {{ $data['in_queue'] }}
+                        </div>
                     </div>
                 </div>
-            </div>
+                <div class="col-md-2">
+                    <div class="card app-card status-card">
+                        <div class="card-header header-orange">
+                            <span>Total Trucks in Progress</span>
+                        </div>
+                        <div class="card-body">
+                            {{ $data['in_progress'] }}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="card app-card status-card">
+                        <div class="card-header header-blue">
+                            <span>Total Completed Trucks</span>
+                        </div>
+                        <div class="card-body">
+                            {{ $data['complited'] }}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="card app-card status-card">
+                        <div class="card-header header-red">
+                            <span>Total Outstanding Trucks</span>
+                        </div>
+                        <div class="card-body">
+                            {{ $data['outstanding_trucks'] }}
+                        </div>
+                    </div>
+                </div>
 
-        </div>
-        <div class="legend-container">
-            <div class="legend-item">
-                <i class="fas fa-square text-red" style="color: red;"></i> Non-Active
             </div>
-            <div class="legend-item">
-                <i class="fas fa-square" style="color: grey;"></i> Active-no truck unloading
-            </div>
-            <div class="legend-item">
-                <i class="fas fa-square" style="color: #00765a;"></i> Active-truck unloading
+            <div class="legend-container">
+                <div class="legend-item">
+                    <i class="fas fa-square text-red" style="color: red;"></i> Non-Active
+                </div>
+                <div class="legend-item">
+                    <i class="fas fa-square" style="color: grey;"></i> Active-no truck unloading
+                </div>
+                <div class="legend-item">
+                    <i class="fas fa-square" style="color: #00765a;"></i> Active-truck unloading
+                </div>
             </div>
         </div>
     </div>
@@ -510,7 +518,7 @@
             })
         }
 
-        setInterval(updateContent, 5000);
+        //setInterval(updateContent, 5000);
 
         function updateDateTime() {
             const now = new Date();

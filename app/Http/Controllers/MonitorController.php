@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class MonitorController extends Controller
@@ -13,17 +12,17 @@ class MonitorController extends Controller
         header("Pragma: no-cache");
     }
 
-        public function romanNumerals($number) {
-        $map = array('M' => 1000, 'CM' => 900, 'D' => 500, 'CD' => 400, 'C' => 100, 'XC' => 90, 'L' => 50, 'XL' => 40, 'X' => 10, 'IX' => 9, 'V' => 5, 'IV' => 4, 'I' => 1);
-        $value = '';
-        foreach ($map as $roman => $int) {
-            while ($number >= $int) {
-                $value .= $roman;
-                $number -= $int;
-            }
-        }
-        return $value;
-    }
+    // public function romanNumerals($number) {
+    //     $map = array('M' => 1000, 'CM' => 900, 'D' => 500, 'CD' => 400, 'C' => 100, 'XC' => 90, 'L' => 50, 'XL' => 40, 'X' => 10, 'IX' => 9, 'V' => 5, 'IV' => 4, 'I' => 1);
+    //     $value = '';
+    //     foreach ($map as $roman => $int) {
+    //         while ($number >= $int) {
+    //             $value .= $roman;
+    //             $number -= $int;
+    //         }
+    //     }
+    //     return $value;
+    // }
 
     public function showMonitor() {
         $data = $this->monitor();
@@ -37,7 +36,6 @@ class MonitorController extends Controller
         foreach ($data['type2'] as $item) {
             $item->loc = $this->getGangScrapType($item->type);
         }
-        // dd($data);
         return view('waiting', ['data' => $data]);
     }
 
@@ -113,7 +111,6 @@ class MonitorController extends Controller
         foreach ($type as $item) {
             $list[] = $this->getWaitingList($item->truck_no);
         }
-        // dd($list);
 
         return response()->json([
             'status' => 200,

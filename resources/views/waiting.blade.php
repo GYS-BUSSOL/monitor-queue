@@ -139,60 +139,67 @@
 
 <body>
 
-    <div class="date-time" id="currentDateTime"></div>
-    <div class="container">
-        <div class="section-title">WAITING AREA</div>
-        <div class="card-wrapper" id="waitingArea">
-            @php
-                $i = 0;
-            @endphp
-            @foreach ($data['type'] as $type)
-                <div class="card">
-                    <div class="card-header orange">
-                        {{ strtoupper($type->type) . ' (' . $type->total . ')' }}
-                    </div>
-                    <div class="card-content">
-                        <table class="table">
-                            <tr>
-                                <th>Queue Number</th>
-                                <th>Truck Number</th>
-                            </tr>
-                            <tbody id="waiting{{ $i }}"></tbody>
-                        </table>
-                    </div>
-                </div>
-                @php
-                    $i++;
-                @endphp
-            @endforeach
-        </div>
-        <div class="section-title">TO SCRAP YARD</div>
-        <div class="card-wrapper" id="scrapYard">
-            @php
-                $i = 0;
-            @endphp
-            @foreach ($data['type2'] as $group)
-                <div class="card">
-                    <div class="card-header green">
-                        {{ strtoupper($group->type) }}
-                        <br>
-                        {{ '( ' . $group->loc . ' )' }}
-                    </div>
-                    <div class="card-content">
-                        <table class="table">
-                            <tr>
-                                <th>Queue Number</th>
-                                <th>Truck Number</th>
-                            </tr>
-                            <tbody id="scrap{{ $i }}"></tbody>
-                        </table>
-                    </div>
-                </div>
-                @php
-                    $i++;
-                @endphp
-            @endforeach
+    <div
+        style="
+    background: url('{{ asset('assets/images/queue/background.png') }}') center center / contain no-repeat;
+    height: 100vh;
+    width: 100vw;">
 
+        <div class="date-time" id="currentDateTime"></div>
+        <div class="container">
+            <div class="section-title">WAITING AREA</div>
+            <div class="card-wrapper" id="waitingArea">
+                @php
+                    $i = 0;
+                @endphp
+                @foreach ($data['type'] as $type)
+                    <div class="card">
+                        <div class="card-header orange">
+                            {{ strtoupper($type->type) . ' (' . $type->total . ')' }}
+                        </div>
+                        <div class="card-content">
+                            <table class="table">
+                                <tr>
+                                    <th>Queue Number</th>
+                                    <th>Truck Number</th>
+                                </tr>
+                                <tbody id="waiting{{ $i }}"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    @php
+                        $i++;
+                    @endphp
+                @endforeach
+            </div>
+            <div class="section-title">TO SCRAP YARD</div>
+            <div class="card-wrapper" id="scrapYard">
+                @php
+                    $i = 0;
+                @endphp
+                @foreach ($data['type2'] as $group)
+                    <div class="card">
+                        <div class="card-header green">
+                            {{ strtoupper($group->type) }}
+                            <br>
+                            {{ '( ' . $group->loc . ' )' }}
+                        </div>
+                        <div class="card-content">
+                            <table class="table">
+                                <tr>
+                                    <th>Queue Number</th>
+                                    <th>Truck Number</th>
+                                </tr>
+                                <tbody id="scrap{{ $i }}"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    @php
+                        $i++;
+                    @endphp
+                @endforeach
+
+            </div>
         </div>
     </div>
 
@@ -238,12 +245,6 @@
                 });
             }
         }
-
-        // function announceMovement(queueNumber, fromArea, toArea) {
-        //     const queueNumberFormat = convertNumberToWords(queueNumber);
-        //     const message = `Nomor antrean ${queueNumberFormat} silahkan menuju ke ${toArea}`;
-        //     speakText(message);
-        // }
 
         function getFemaleVoice(lang = 'id-ID') {
             const voices = window.speechSynthesis.getVoices();
@@ -407,7 +408,7 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             activateSpeechSynthesis();
-            setInterval(updateContent, 5000); // Memperbarui data setiap 5 detik
+            //setInterval(updateContent, 5000); // Memperbarui data setiap 5 detik
         });
 
 
