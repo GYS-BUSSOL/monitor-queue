@@ -40,13 +40,13 @@ class MonitorController extends Controller
     }
 
     public function monitor() {
-        $query = DB::select('EXEC WBMS.dbo.usp_QMGetQueuingMonitor');
+        $query = DB::select('EXEC [dbo].[usp_QMGetQueuingMonitor]');
         $getData = $query[0];
-        $queryQueueIn = DB::select('EXEC WBMS.dbo.usp_QMGetListQueueIn');
+        $queryQueueIn = DB::select('EXEC [dbo].[usp_QMGetListQueueIn]');
 
         $gang_next_queue = $getData->gang_next_queue ? sprintf('%03d', $getData->gang_next_queue) : "---";
 
-        $active_gangs = DB::select('EXEC WBMS.dbo.usp_QMGetActiveGang');
+        $active_gangs = DB::select('EXEC [dbo].[usp_QMGetActiveGang]');
 
         $applications = [];
         foreach ($active_gangs as $gang) {
@@ -81,18 +81,18 @@ class MonitorController extends Controller
     }
 
     public function getGangScrapType($type) {
-        $data= DB::select('EXEC Wbms.dbo.usp_QMGetGangScrapType ?', [$type]);
+        $data= DB::select('EXEC [dbo].[usp_QMGetGangScrapType] ?', [$type]);
         $loc = $data[0]->location_name;
         return $loc;
     }
 
     public function toScrapYardList($truck_no) {
-        $data = DB::select('EXEC Wbms.dbo.usp_QMtoScrapYardList ?', [$truck_no]);
+        $data = DB::select('EXEC [dbo].[usp_QMtoScrapYardList] ?', [$truck_no]);
         return $data;
     }
 
     public function getWaitingList($truck_no) {
-        $data = DB::select('EXEC Wbms.dbo.usp_QMGetWaitingList ?', [$truck_no]);
+        $data = DB::select('EXEC [dbo].[usp_QMGetWaitingList] ?', [$truck_no]);
         return $data;
 
     }
