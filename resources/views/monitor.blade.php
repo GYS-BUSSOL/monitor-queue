@@ -107,7 +107,6 @@
             display: flex;
             flex-direction: column;
             padding: 20px;
-            gap: 20px;
         }
 
         .title {
@@ -132,7 +131,7 @@
             font-size: 1.2em;
             color: #555;
             text-align: center;
-            /* margin-bottom: 1rem; */
+            margin-bottom: 1rem;
         }
 
         .app-card {
