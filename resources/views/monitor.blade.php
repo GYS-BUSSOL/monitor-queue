@@ -93,23 +93,21 @@
         }
 
         body {
-            background-color: #f0f4f8;
-            height: 100vh;
-            width: 100vw;
             margin: 0;
-            /* display: flex; */
-            object-fit: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            user-select: none;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            /* Menghilangkan scroll pada halaman */
+            font-family: Arial, sans-serif;
+            background-color: #f0f4f8;
         }
 
         .container {
             max-width: 100%;
-            margin: 0 auto;
-            padding: 0 1rem;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            gap: 20px;
         }
 
         .title {
@@ -134,7 +132,7 @@
             font-size: 1.2em;
             color: #555;
             text-align: center;
-            margin-bottom: 1rem;
+            /* margin-bottom: 1rem; */
         }
 
         .app-card {
@@ -357,15 +355,35 @@
             font-weight: bold;
             margin-top: -15px;
         }
+
+        .logo {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 1000;
+        }
+
+        .logo img {
+            width: 8%;
+            height: auto;
+        }
+
+        .copyright {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            z-index: 999;
+            font-size: 22px
+        }
     </style>
 </head>
 
 <body>
     <div
-        style="
-    background: url('{{ asset('assets/images/queue/background.png') }}') center center / contain no-repeat;
-    height: 100vh;
-    width: 100vw;">
+        style="background: url('{{ asset('assets/images/queue/background.png') }}') center/cover no-repeat; height: 100vh;">
+        <div class="logo">
+            <img src="{{ asset('assets/images/logo.png') }}" alt="Logo">
+        </div>
         <div class="container">
             <h1 class="title">Queue Management System</h1>
             <div class="date-time" id="currentDateTime"></div>
@@ -493,6 +511,9 @@
                 </div>
             </div>
         </div>
+        <div class="copyright">
+            <p>2025 &copy; <a href="https://garudayamatosteel.com">GYS</a> All rights reserved.</p>
+        </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
@@ -503,7 +524,7 @@
 
         function updateContent() {
             $.ajax({
-                url: '/get-monitor',
+                url: '/',
                 method: 'GET',
                 cache: false,
                 success: function(response) {
@@ -518,7 +539,7 @@
             })
         }
 
-        //setInterval(updateContent, 5000);
+        setInterval(updateContent, 5000);
 
         function updateDateTime() {
             const now = new Date();
@@ -541,25 +562,22 @@
             const timeInQueue = {};
             applications.forEach((app, index) => {
                 if (app['durasi'] !== null) {
-                    const now = new Date();
-                    const [hours, minutes, seconds] = app['durasi'].split(':').map(Number);
-                    initialDurations[`initialDuration${index}`] = Math.floor((
-                            new Date(now.setHours(hours, minutes, seconds)) - new Date(now.setHours(0, 0, 0))) /
-                        1000);
-                    timeInQueue[`timeInQueue${index}`] = initialDurations[[`initialDuration${index}`]];
+                    const [hours, minutes, seconds] = app.durasi.split(':').map(Number);
+                    const initialDuration = hours * 3600 + minutes * 60 + seconds;
 
-                    // Jalankan interval untuk setiap 
+                    let timeInQueue = initialDuration;
+
                     setInterval(() => {
-                        timeInQueue[[`timeInQueue${index}`]]++;
-
+                        timeInQueue++;
                         const timeElement = document.getElementById(`timeInQueue${index}`);
 
                         if (timeElement) {
-                            timeElement.innerHTML = new Date(timeInQueue[`timeInQueue${index}`] * 1000)
-                                .toISOString()
-                                .substr(11, 8);
+                            const hours = Math.floor(timeInQueue / 3600).toString().padStart(2, '0');
+                            const minutes = Math.floor((timeInQueue % 3600) / 60).toString().padStart(2,
+                                '0');
+                            const seconds = (timeInQueue % 60).toString().padStart(2, '0');
+                            timeElement.innerHTML = `${hours}:${minutes}:${seconds}`;
                         }
-
                     }, 1000);
                 }
             });

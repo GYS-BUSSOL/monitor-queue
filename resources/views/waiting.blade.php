@@ -134,16 +134,36 @@
                 overflow-y: scroll;
             }
         }
+
+        .logo {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 1000;
+        }
+
+        .logo img {
+            width: 8%;
+            height: auto;
+        }
+
+        .copyright {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            z-index: 999;
+            font-size: 22px
+        }
     </style>
 </head>
 
 <body>
 
     <div
-        style="
-    background: url('{{ asset('assets/images/queue/background.png') }}') center center / contain no-repeat;
-    height: 100vh;
-    width: 100vw;">
+        style="background: url('{{ asset('assets/images/queue/background.png') }}') center/cover no-repeat; height: 100vh;">
+        <div class="logo">
+            <img src="{{ asset('assets/images/logo.png') }}" alt="Logo">
+        </div>
 
         <div class="date-time" id="currentDateTime"></div>
         <div class="container">
@@ -200,6 +220,9 @@
                 @endforeach
 
             </div>
+        </div>
+        <div class="copyright">
+            <p>2025 &copy; <a href="https://garudayamatosteel.com">GYS</a> All rights reserved.</p>
         </div>
     </div>
 
@@ -408,7 +431,8 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             activateSpeechSynthesis();
-            //setInterval(updateContent, 5000); // Memperbarui data setiap 5 detik
+            updateContent();
+            setInterval(updateContent, 5000); // Memperbarui data setiap 5 detik
         });
 
 

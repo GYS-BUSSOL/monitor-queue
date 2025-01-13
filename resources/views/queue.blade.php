@@ -28,7 +28,7 @@
         }
 
         .logo img {
-            width: 7%;
+            width: 8%;
             height: auto;
         }
 
@@ -37,6 +37,16 @@
             bottom: 10px;
             left: 10px;
             z-index: 999;
+            font-size: 22px
+        }
+
+        .date-time {
+            color: white;
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            z-index: 999;
+            font-size: 22px
         }
 
         .flex-container {
@@ -53,17 +63,16 @@
         }
 
         .queue img {
-            width: auto;
-            height: 50%;
+            width: 80%;
         }
 
         .queue span {
             position: absolute;
-            top: 52%;
+            top: 53%;
             left: 50%;
             transform: translate(-50%, -50%);
             color: white;
-            font-size: 90px;
+            font-size: 120px;
             text-align: center;
         }
 
@@ -103,13 +112,13 @@
         </div>
         <div class="queue">
             <img src="{{ asset('assets/images/queue/box-queuing.png') }}" alt="Queue Box">
-            <span id="queue-no"><strong>A001</strong></span>
+            <span id="queue-no"></span>
         </div>
         <div class="slide">
             <div class="slider-container">
                 <div class="slider">
-                    @for ($i = 1; $i <= 2; $i++)
-                        <img src="{{ asset('assets/images/queue/Pic' . $i . '.png') }}" alt="Image {{ $i }}">
+                    @for ($i = 1; $i <= 12; $i++)
+                        <img src="{{ asset('assets/images/queue/img' . $i . '.png') }}" alt="Image {{ $i }}">
                     @endfor
                 </div>
             </div>
@@ -117,6 +126,7 @@
         <div class="copyright">
             <p>2025 &copy; <a href="https://garudayamatosteel.com">GYS</a> All rights reserved.</p>
         </div>
+        <div class="date-time" id="currentDateTime"></div>
 
     </div>
 
@@ -124,11 +134,49 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
+        let currentQueueIndex = 0;
+
+        function updateContent() {
+            $.ajax({
+                url: '/get-waiting',
+                method: 'GET',
+                cache: false,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                },
+                success: function(response) {
+                    const list2 = response.data.list2
+                    const queue = document.getElementById("queue-no");
+
+                    const queueNumbers = list2.flatMap((group) =>
+                        group.map(
+                            (item) =>
+                            `${item.truck_type}${String(item.QueNo).padStart(3, "0")}`
+                        )
+                    );
+
+                    queue.innerHTML = `<strong>${queueNumbers[currentQueueIndex]}</strong>`;
+                    currentQueueIndex = (currentQueueIndex + 1) % queueNumbers.length;
+
+                },
+                error: function(xhr, status, error) {
+                    console.log('Error occurred: ' + status + ' - ' + error);
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateContent();
+            setInterval(updateContent, 10000);
+            slideImage();
+        });
+
+
+        function slideImage() {
             const slider = document.querySelector('.slider');
             const images = document.querySelectorAll('.slider img');
             let currentIndex = 0;
-            const slideInterval = 5000; // 20 detik
+            const slideInterval = 10000;
             const slideDuration = 1000; // Durasi slide dalam ms (1 detik)
 
             function nextSlide() {
@@ -138,46 +186,23 @@
             }
 
             setInterval(nextSlide, slideInterval);
-        });
-
-        // Inisialisasi pertama
-        nextSlide();
-
-        function updateContent() {
-            $.ajax({
-                url: '/get-waiting',
-                method: 'GET',
-                cache: false,
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
-                        'content'),
-                },
-                success: function(response) {
-                    const queue = document.getElementById("queue-no");
-                    const list2 = response.data.list2
-
-                    // list2.forEach((group, index) => {
-                    //     if (group.length > 0) {
-                    //         queue.innerHTML = group
-                    //             .map(
-                    //                 (item) =>
-                    //                 `<strong>${item.truck_type}${String(item.QueNo).padStart(3, "0")}</strong>`
-                    //             )
-                    //             .join("");
-                    //     }
-                    // });
-
-                },
-
-                error: function(xhr, status, error) {
-                    console.log('Error occurred: ' + status + ' - ' + error);
-                }
-            })
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            setInterval(updateContent, 5000); // Memperbarui data setiap 5 detik
-        });
+        function updateDateTime() {
+            const now = new Date();
+            const options = {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            };
+            document.getElementById('currentDateTime').innerHTML = now.toLocaleDateString('en-US', options);
+        }
+        setInterval(updateDateTime, 1000);
+        updateDateTime();
     </script>
 </body>
 
