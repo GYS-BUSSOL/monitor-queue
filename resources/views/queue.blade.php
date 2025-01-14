@@ -41,12 +41,13 @@
         }
 
         .date-time {
-            color: white;
+            color: black;
             position: absolute;
             bottom: 10px;
-            right: 10px;
+            left: 10px;
             z-index: 999;
-            font-size: 22px
+            font-size: 22px;
+            font-weight: bold;
         }
 
         .flex-container {
@@ -57,18 +58,20 @@
         .queue {
             width: 40%;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             position: relative;
         }
 
-        .queue img {
-            width: 80%;
+        .queue-image {
+            width: 60%;
+            margin-bottom: 10px;
         }
 
         .queue span {
             position: absolute;
-            top: 53%;
+            top: 47%;
             left: 50%;
             transform: translate(-50%, -50%);
             color: white;
@@ -100,6 +103,18 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .blink {
+            width: 50%;
+            animation: blinker 3s linear infinite;
+        }
+
+        @keyframes blinker {
+            50% {
+                opacity: 0;
+            }
         }
     </style>
 </head>
@@ -111,8 +126,9 @@
             <img src="{{ asset('assets/images/logo.png') }}" alt="Logo">
         </div>
         <div class="queue">
-            <img src="{{ asset('assets/images/queue/box-queuing.png') }}" alt="Queue Box">
+            <img class="queue-image" src="{{ asset('assets/images/queue/queuing-box.png') }}" alt="Queue Box">
             <span id="queue-no"></span>
+            <img class="blink" src="{{ asset('assets/images/queue/information-text.png') }}" alt="Tulisan">
         </div>
         <div class="slide">
             <div class="slider-container">
@@ -123,9 +139,9 @@
                 </div>
             </div>
         </div>
-        <div class="copyright">
+        {{-- <div class="copyright">
             <p>2025 &copy; <a href="https://garudayamatosteel.com">GYS</a> All rights reserved.</p>
-        </div>
+        </div> --}}
         <div class="date-time" id="currentDateTime"></div>
 
     </div>
@@ -155,8 +171,15 @@
                         )
                     );
 
-                    queue.innerHTML = `<strong>${queueNumbers[currentQueueIndex]}</strong>`;
-                    currentQueueIndex = (currentQueueIndex + 1) % queueNumbers.length;
+                    console.log(queueNumbers)
+
+                    if (queueNumbers.length > 0) {
+                        queue.innerHTML = `<strong>${queueNumbers[currentQueueIndex]}</strong>`;
+                        currentQueueIndex = (currentQueueIndex + 1) % queueNumbers.length;
+                    } else {
+                        queue.innerHTML = `<strong>-</strong>`;
+                    }
+
 
                 },
                 error: function(xhr, status, error) {
@@ -176,13 +199,27 @@
             const slider = document.querySelector('.slider');
             const images = document.querySelectorAll('.slider img');
             let currentIndex = 0;
-            const slideInterval = 10000;
+            const slideInterval = 15000;
             const slideDuration = 1000; // Durasi slide dalam ms (1 detik)
+            // Duplikasi gambar pertama untuk looping
+            const firstClone = images[0].cloneNode(true);
+            slider.appendChild(firstClone);
 
             function nextSlide() {
-                currentIndex = (currentIndex + 1) % images.length;
+                currentIndex++;
+
+                // Animasi geser ke gambar berikutnya
                 slider.style.transition = `transform ${slideDuration}ms ease-in-out`;
                 slider.style.transform = `translateX(-${currentIndex * 100}%)`;
+
+                // Reset ke awal saat mencapai gambar terakhir (cloning)
+                if (currentIndex === images.length) {
+                    setTimeout(() => {
+                        slider.style.transition = 'none'; // Matikan animasi
+                        slider.style.transform = `translateX(0)`;
+                        currentIndex = 0;
+                    }, slideDuration);
+                }
             }
 
             setInterval(nextSlide, slideInterval);

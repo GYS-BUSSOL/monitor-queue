@@ -221,9 +221,9 @@
 
             </div>
         </div>
-        <div class="copyright">
+        {{-- <div class="copyright">
             <p>2025 &copy; <a href="https://garudayamatosteel.com">GYS</a> All rights reserved.</p>
-        </div>
+        </div> --}}
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
