@@ -56,7 +56,7 @@
         }
 
         .queue {
-            width: 40%;
+            width: 35%;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -80,7 +80,7 @@
         }
 
         .slide {
-            width: 60%;
+            width: 65%;
             display: flex;
             justify-content: flex-end;
             align-items: center;
