@@ -46,7 +46,7 @@
             bottom: 10px;
             left: 10px;
             z-index: 999;
-            font-size: 22px;
+            font-size: 1vw;
             font-weight: bold;
         }
 
@@ -57,6 +57,7 @@
 
         .queue {
             width: 35%;
+            height: 100%;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -75,12 +76,13 @@
             left: 50%;
             transform: translate(-50%, -50%);
             color: white;
-            font-size: 120px;
+            font-size: 4vw;
             text-align: center;
         }
 
         .slide {
             width: 65%;
+            height: 100%;
             display: flex;
             justify-content: flex-end;
             align-items: center;
@@ -139,9 +141,6 @@
                 </div>
             </div>
         </div>
-        {{-- <div class="copyright">
-            <p>2025 &copy; <a href="https://garudayamatosteel.com">GYS</a> All rights reserved.</p>
-        </div> --}}
         <div class="date-time" id="currentDateTime"></div>
 
     </div>
