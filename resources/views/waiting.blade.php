@@ -262,9 +262,10 @@
 
                     const queueNumberWords = convertNumberToWords(queueNumber);
                     // Format pesan suara untuk mengumumkan nomor antrian
-                    const message = `Nomor antrian ${queueNumberWords}, silahkan menuju ke ${area}`;
-                    console.log(message);
-                    speakText(message);
+                    const startMessage = `Nomor antrian`;
+                    const endMessage = `silahkan menuju ke ${area}`
+                    console.log(startMessage, queueNumberWords, endMessage);
+                    speakText(startMessage, queueNumberWords, endMessage);
                 });
             }
         }
@@ -278,20 +279,34 @@
                 voices.find(voice => voice.lang === lang);
         }
 
-        function speakText(message) {
+        function speakText(startMessage, queueNumberWords, endMessage) {
             if (isSpeechSynthesisActivated) {
-                const utterance = new SpeechSynthesisUtterance(message);
-                utterance.lang = 'id-ID';
+                const start = new SpeechSynthesisUtterance(startMessage);
+                const number = new SpeechSynthesisUtterance(queueNumberWords);
+                const end = new SpeechSynthesisUtterance(endMessage);
+                start.lang = 'id-ID';
+                number.lang = 'id-ID';
+                end.lang = 'id-ID';
                 const voiceFemale = getFemaleVoice('id-ID');
                 if (voiceFemale) {
-                    utterance.voice = voiceFemale;
+                    start.voice = voiceFemale;
+                    number.voice = voiceFemale;
+                    end.voice = voiceFemale;
                 } else {
                     console.log('Voice Female Not Found')
                 }
-                utterance.volume = 1.5;
-                utterance.rate = 1;
-                utterance.pitch = 1;
-                window.speechSynthesis.speak(utterance);
+                start.volume = 1.5;
+                start.rate = 1;
+                start.pitch = 1;
+                number.volume = 1.5;
+                number.rate = 0.7;
+                number.pitch = 1;
+                end.volume = 1.5;
+                end.rate = 1;
+                end.pitch = 1;
+                window.speechSynthesis.speak(start);
+                window.speechSynthesis.speak(number);
+                window.speechSynthesis.speak(end);
             } else {
                 console.log('Speech synthesis is not activated.');
             }
