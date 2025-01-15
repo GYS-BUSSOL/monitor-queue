@@ -118,6 +118,7 @@ class MonitorController extends Controller
             'data' => [
                 'list' => $list,
                 'list2' => $list2,
+                'type' => $type
             ],
         ], 200);
 

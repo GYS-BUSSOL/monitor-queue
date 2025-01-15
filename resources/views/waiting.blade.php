@@ -175,7 +175,8 @@
                 @foreach ($data['type'] as $type)
                     <div class="card">
                         <div class="card-header orange">
-                            {{ strtoupper($type->type) . ' (' . $type->total . ')' }}
+                            {{ strtoupper($type->type) . ' (' }} <span id="totalType{{ $i }}"></span>
+                            {{ ')' }}
                         </div>
                         <div class="card-content">
                             <table class="table">
@@ -371,9 +372,17 @@
                 success: function(response) {
                     const waitingAreaElement = document.getElementById("waitingArea");
                     const scrapYardElement = document.getElementById("scrapYard");
+                    const totalType = document.getElementById("totalType");
 
                     const list = response.data.list
                     const list2 = response.data.list2
+                    const type = response.data.type
+
+                    type.forEach((group, index) => {
+                        const typeElementId = `totalType${index}`;
+                        const typeElement = document.getElementById(typeElementId);
+                        typeElement.innerHTML = group.total
+                    });
 
                     // WAITING AREA
                     list.forEach((group, index) => {
