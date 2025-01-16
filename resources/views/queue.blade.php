@@ -103,7 +103,7 @@
 
         .slider img {
             width: 100%;
-            height: 90%;
+            height: 100%;
             object-fit: cover;
             flex-shrink: 0;
         }
