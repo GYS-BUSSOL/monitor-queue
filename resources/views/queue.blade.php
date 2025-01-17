@@ -22,8 +22,8 @@
 
         .logo {
             position: absolute;
-            top: 10px;
-            left: 10px;
+            top: 1.8vh;
+            left: 0.8vw;
             z-index: 1000;
         }
 
@@ -70,14 +70,17 @@
             margin-bottom: 10px;
         }
 
-        .queue span {
+        .queue-box {
             position: absolute;
             top: 47%;
             left: 50%;
             transform: translate(-50%, -50%);
             color: white;
-            font-size: 4vw;
             text-align: center;
+        }
+
+        .queue-item {
+            display: block;
         }
 
         .slide {
@@ -129,8 +132,13 @@
         </div>
         <div class="queue">
             <img class="queue-image" src="{{ asset('assets/images/queue/queuing-box.png') }}" alt="Queue Box">
-            <span id="queue-no"></span>
-            <img class="blink" src="{{ asset('assets/images/queue/information-text.png') }}" alt="Tulisan">
+            <div class="queue-box">
+                <span id="queue-no" class="queue-item" style="font-size: 4vw; margin-top: 2vh"></span>
+                <hr style="height:0.3vh;">
+                <span id="vehicle-no" class="queue-item" style="font-size: 2vw;"></span>
+                <span id="gang" class="queue-item" style="font-size: 2vw;"></span>
+            </div>
+            <img class="blink" src="{{ asset('assets/images/queue/information-text.png') }}" alt="Information">
         </div>
         <div class="slide">
             <div class="slider-container">
@@ -161,7 +169,11 @@
                 },
                 success: function(response) {
                     const list2 = response.data.list2
+                    const gang = response.data.gang
+
                     const queue = document.getElementById("queue-no");
+                    const vehicleNumber = document.getElementById("vehicle-no");
+                    const vehicleType = document.getElementById("gang");
 
                     const queueNumbers = list2.flatMap((group) =>
                         group.map(
@@ -170,10 +182,21 @@
                         )
                     );
 
-                    console.log(queueNumbers)
+                    const vehicleNumbers = list2.flatMap((group) =>
+                        group.map(
+                            (item) =>
+                            `${item.VechileNo}`
+                        )
+                    );
+
+                    const vehicleTypes = gang.map((item) =>
+                        `GANG ${item.loc}`
+                    );
 
                     if (queueNumbers.length > 0) {
                         queue.innerHTML = `<strong>${queueNumbers[currentQueueIndex]}</strong>`;
+                        vehicleNumber.innerHTML = `<strong>${vehicleNumbers[currentQueueIndex]}</strong>`
+                        vehicleType.innerHTML = `<strong>${vehicleTypes[currentQueueIndex]}</strong>`
                         currentQueueIndex = (currentQueueIndex + 1) % queueNumbers.length;
                     } else {
                         queue.innerHTML = `<strong>-</strong>`;

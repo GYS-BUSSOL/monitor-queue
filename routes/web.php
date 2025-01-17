@@ -9,5 +9,4 @@ Route::get('/information', function(){
   return view('queue');
 });
 
-Route::get('/get-monitor', [MonitorController::class, 'monitor']);
 Route::get('/get-waiting', [MonitorController::class, 'waiting']);

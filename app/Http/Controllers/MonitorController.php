@@ -111,6 +111,27 @@ class MonitorController extends Controller
         foreach ($type as $item) {
             $list[] = $this->getWaitingList($item->truck_no);
         }
+        
+        foreach ($type2 as $item) {
+            $item->loc = $this->getGangScrapType($item->type);
+        }
+
+        $gang = [];
+
+        // Iterasi array1 untuk menemukan objek di dalam nested arrays
+        foreach ($list2 as $innerArray) {
+            if (is_array($innerArray)) {
+                foreach ($innerArray as $item1) {
+                    // Periksa apakah ada kecocokan dengan array2
+                    foreach ($type2 as $item2) {
+                        if ($item1->truck_type === $item2->truck_no) {
+                            // Gabungkan data
+                            $gang[] = $item2;
+                        }
+                    }
+                }
+            }
+        }
 
         return response()->json([
             'status' => 200,
@@ -118,7 +139,9 @@ class MonitorController extends Controller
             'data' => [
                 'list' => $list,
                 'list2' => $list2,
-                'type' => $type
+                'type' => $type,
+                'type2' => $type2,
+                'gang' => $gang
             ],
         ], 200);
 
