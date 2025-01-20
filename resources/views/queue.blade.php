@@ -72,7 +72,7 @@
 
         .queue-box {
             position: absolute;
-            top: 47%;
+            top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             color: white;
@@ -133,9 +133,9 @@
         <div class="queue">
             <img class="queue-image" src="{{ asset('assets/images/queue/queuing-box.png') }}" alt="Queue Box">
             <div class="queue-box">
-                <span id="queue-no" class="queue-item" style="font-size: 4vw; margin-top: 2vh"></span>
-                <hr style="height:0.3vh;">
-                <span id="vehicle-no" class="queue-item" style="font-size: 2vw;"></span>
+                <span id="queue-no" class="queue-item"
+                    style="font-size: 4vw; border-bottom: 0.4vh solid #ffffff53;"></span>
+                <span id="vehicle-no" class="queue-item" style="font-size: 2vw; margin-top: 1vh;"></span>
                 <span id="gang" class="queue-item" style="font-size: 2vw;"></span>
             </div>
             <img class="blink" src="{{ asset('assets/images/queue/information-text.png') }}" alt="Information">
